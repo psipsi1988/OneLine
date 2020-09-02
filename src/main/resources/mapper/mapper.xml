@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper">
+
+	<resultMap type="map" id="mapList">
+		<result column="seq" 			property="seq"/>
+		<result column="mem_id" 		property="memId"/>
+		<result column="mem_name" 		property="memName"/>
+		<result column="board_subject" 	property="boardSubject"/>
+		<result column="board_content" 	property="boardContent"/>
+		<result column="reg_date" 		property="regDate"/>
+		<result column="upt_date" 		property="uptDate"/>
+		<result column="view_cnt" 		property="viewCnt"/>
+	</resultMap>
+	
+	<!-- 게시판 리스트 -->
+	<select id="list" parameterType="map" resultMap="mapList">
+		select
+			seq
+			, mem_id
+			, mem_name
+			, board_subject
+			, board_content
+			, reg_date
+			, upt_date
+			, view_cnt
+		 FROM (SELECT Tb.*, rownum rNum from (
+		 	SELECT * FROM board_study 
+		 		WHERE 1=1 
+		 		<if test="searchTxt != null and !searchTxt.equals('') and !searchField.equals('choice')">
+					 AND ${searchField} LIKE '%'||#{searchTxt}||'%'
+			 		<if test="searchField.equals('BOARD_CONTENT')">
+						AND BOARD_CONTENT LIKE '%'||#{searchTxt}||'%' 
+						OR BOARD_SUBJECT LIKE '%'||#{searchTxt}||'%' 
+					</if>
+				</if>
+				<if test="startDate != null and !startDate.equals('')">
+						AND REG_DATE <![CDATA[>]]>= #{startDate } 
+				</if>
+				<if test="endDate != null and !endDate.equals('')">
+						AND REG_DATE <![CDATA[<]]>= #{endDate }
+				</if>	
+				 ORDER BY seq DESC
+				 ) Tb
+				)
+				WHERE rNum BETWEEN ${start} AND ${end}
+	</select>
+
+	<!-- 글쓰기 -->
+	<insert id="writeAction" >
+		INSERT INTO board_study
+		(
+			seq
+			, mem_id
+			, mem_name
+			, board_subject 
+			, board_content
+			, reg_date
+			, view_cnt
+		)
+		VALUES
+		(
+			(SELECT NVL(MAX(seq), 0)+1 FROM board_study)
+			, #{memId}
+			, #{memName}
+			, #{boardSubject}
+			, #{boardContent} 
+			, sysdate
+			, 0
+		)
+	</insert>
+	
+	<!-- 상세보기 -->
+	<select id="detail" parameterType="int" resultMap="mapList">
+		SELECT
+			seq
+			, mem_id
+			, mem_name
+			, board_subject
+			, board_content
+			, reg_date
+			, upt_date
+			, view_cnt
+		 FROM board_study 
+		 WHERE seq=#{seq }
+		
+	</select>
+
+	<update id="editAction" parameterType="map">
+		UPDATE board_study SET
+			  mem_id 		=	#{memId }
+			, mem_name 		=	#{memName }
+			, board_subject =	#{boardSubject }
+			, board_content =	#{boardContent }
+			, upt_date 		=	sysdate
+		WHERE seq=#{seq }
+	
+	</update>
+	
+	<update id="viewCnt" parameterType="int">
+		UPDATE board_study 
+		SET
+			view_cnt=view_cnt+1
+		
+		WHERE seq=#{seq }
+	
+	</update>
+	
+	<!-- 삭제 첫 번째 방법 (ajax로 구현) -->
+	<delete id="delete" parameterType="map">
+		DELETE FROM board_study 
+		
+		WHERE seq=#{seq }
+	
+<!-- 	(1, 3, 4, 5) -->
+<!-- 	 <foreach collection="list" open="(" close=")" item="chk" separator=","> -->
+<!-- 	 	#{chk.value } -->
+<!-- 	 </foreach> -->
+
+	</delete>
+	
+	<!-- 삭제 두 번째  방법 -->
+	<delete id="delete2" parameterType="list">
+		
+		DELETE FROM board_study 
+		
+		WHERE seq in
+		 <foreach collection="list" open="(" close=")" item="checkbox" separator=",">
+		 	#{checkbox.value }
+		 </foreach>
+	</delete>
+	
+	<!-- 게시판 게시물 전체 개수 구하기 -->
+	<select id="totalRecordCount" resultType="int">
+		SELECT 
+			COUNT(*) 
+		FROM board_study
+			WHERE 1=1 
+		 		<if test="searchTxt != null and !searchTxt.equals('') and !searchField.equals('choice')">
+					 AND ${searchField} LIKE '%'||#{searchTxt}||'%'
+			 		<if test="searchField.equals('BOARD_CONTENT')">
+						OR BOARD_SUBJECT LIKE '%'||#{searchTxt}||'%' 
+						
+					</if>
+				</if>
+				<if test="startDate != null and !startDate.equals('')">
+						AND REG_DATE <![CDATA[>]]>= #{startDate } 
+				</if>
+				<if test="endDate != null and !endDate.equals('')">
+						AND REG_DATE <![CDATA[<]]>= #{endDate }
+				</if>	
+
+	
+	</select>
+	
+	
+<!-- 		<choose>
+			<when test=""></when>
+			<otherwise></otherwise>
+			
+			'%'||#{searchTxt}||'%'
+			'%${searchTxt}%' 		
+			
+			
+		</choose> -->
+
+
+
+</mapper>
