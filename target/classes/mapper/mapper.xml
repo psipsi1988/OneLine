@@ -112,11 +112,6 @@
 		
 		WHERE seq=#{seq }
 	
-<!-- 	(1, 3, 4, 5) -->
-<!-- 	 <foreach collection="list" open="(" close=")" item="chk" separator=","> -->
-<!-- 	 	#{chk.value } -->
-<!-- 	 </foreach> -->
-
 	</delete>
 	
 	<!-- 삭제 두 번째  방법 -->
@@ -149,9 +144,27 @@
 				<if test="endDate != null and !endDate.equals('')">
 						AND REG_DATE <![CDATA[<]]>= #{endDate }
 				</if>	
-
-	
 	</select>
+	<!-- 게시판 게시물 전체 개수 구하기 -->
+<!-- 	<select id="total" resultType="int">
+		SELECT 
+			COUNT(*) 
+		FROM board_study
+			WHERE 1=1 
+		 		<if test="searchTxt != null and !searchTxt.equals('') and !searchField.equals('choice')">
+					 AND ${searchField} LIKE '%'||#{searchTxt}||'%'
+			 		<if test="searchField.equals('BOARD_CONTENT')">
+						OR BOARD_SUBJECT LIKE '%'||#{searchTxt}||'%' 
+						
+					</if>
+				</if>
+				<if test="startDate != null and !startDate.equals('')">
+						AND REG_DATE <![CDATA[>]]>= #{startDate } 
+				</if>
+				<if test="endDate != null and !endDate.equals('')">
+						AND REG_DATE <![CDATA[<]]>= #{endDate }
+				</if>	
+	</select> -->
 	
 	
 <!-- 		<choose>

@@ -115,7 +115,8 @@ $(function(){
     		var reg = /(.*?)\.(jpg|jpeg|png|gif|bmp)$/;
     	  	if(fileName.match(reg)) {
 //     			alert("해당 파일은 이미지 파일입니다.");
-    		} else {
+    		} 
+    	  	else {
     			alert("해당 파일은 이미지 파일이 아닙니다.");
     			$('#userfile1').val("");
     		    setTimeout(function(){
@@ -145,37 +146,6 @@ $(function(){
     	});
 
     	
-    	
-//     	$("#imageUploadBtn").on("click", function(e){
-//     		var formData = new FormData();
-//     		var inputFile = $("input[name='uploadFile']");
-//     		var files = inputFile[0].files;
-//     		console.log(files);
-    		
-//     		//add file data to formdata
-//     		for(var i=0; i<files.length; i++){
-    			
-//     			if(!checkExtension(files[i].name, files[i].size)){
-//     				return false;
-//     			}
-    			
-//     			formData.append("uploadFile", files[i]);
-//     		}
-    		
-//     		$.ajax({
-//     			url : '/uploadAjaxAction',
-//     			processData : false,
-//     			contentType : false,
-//     			data : formData,
-//     			type : 'POST',
-//     			success : function(result){
-//     				alert("Uploaded");
-//     			}
-//     		}); // $.ajax
-//     	});
-        
-    	
-    	
     	/* 첨부된 이미지 미리보기 영역에 띄우기 */
     	function readURL(input) {
     		if (input.files && input.files[0]) {
@@ -204,6 +174,12 @@ $(function(){
     	});
     	
        
+    	//업로드 버튼 추가
+		$("#fileBtn").click(function(){
+			var data = "<div><input type = file></div>";
+			$("#fileDv").append(data);
+		})
+    
 });
 </script>
 </head>
@@ -252,24 +228,16 @@ $(function(){
 <!-- 				<input type="button" id="uploadAjaxBtn" name="uploadAjaxBtn" value="Ajax버튼"/> -->
 			</td>			
 		</tr>
+<!-- 		<tr>
+			<td>		
+				<div>	
+					<input type="button" id="fileBtn" value="업로드 추가"/>
+						<div id="fileDv"></div>
+				</div>
+			</td>
+		</tr> -->
 	</table>
 	</form>
-	
-	<ul>
-		<c:forEach items="${fileMap }" var="file">
-			<li>
-				파일명 : ${file.key }
-				&nbsp;&nbsp;
-				파일크기 : ${file.value }Kb
-				&nbsp;&nbsp;
-				<a href="download.do?fileName=${file.key }&oriFileName=임시파일명.jpg">
-				다운로드
-				</a>
-				<!-- 다운로드시 원본파일명으로 변경하려면 기존 파일명을 
-				DB에 저장해야 하므로 여기서는 임시로 파일명을 지정한다.  -->
-			</li>
-		</c:forEach>
-	</ul>
 </div>
 </body>
 </html>

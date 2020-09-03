@@ -55,7 +55,6 @@ $(function(){
                 },
                 error: function(){
                 	alert("서버통신 오류");
-                	
                	}
             });
         }
@@ -67,7 +66,7 @@ $(function(){
             alert("삭제할 글을 선택해주세요.");
         }
         else{
-    	$("#listFrm").attr("action", "delete2.do").attr("method", "post").submit();
+    	$("#frm").attr("action", "delete2.do").attr("method", "post").submit();
     	}
     })
     
@@ -141,8 +140,7 @@ $(function(){
 				}
 			})
 		})
-		
-
+    
     
         
 });//제이 쿼리
@@ -153,6 +151,11 @@ window.onload = function(){
 	if(sValue==""){
 		jQuery("#searchField").val("choice").attr("selected", "selected");
 	}
+}
+
+function goPage(num){
+	$("#pageNo").val(num);
+	$("#searchBtn").click();
 }
 
 </script>
@@ -167,13 +170,14 @@ window.onload = function(){
 	<div>
 	<button type="button" onclick="location.href='${pageContext.request.contextPath}/write'" >글쓰기</button>
 	<button id="deleteBtn1" onsubmit="false">삭제1</button>
-	<button id="deleteBtn2" onsubmit="false">삭제2</button><br/>
-
-	
+	<button id="deleteBtn2" onsubmit="false">삭제2</button>
 	</div>
+	<br/>
     <!-- 검색창 -->
 	<form  id="searchfrm">
 	<div>
+	<input type = "hidden" name = "pageNo" id = "pageNo" value = "1">
+	<input type = "hidden" name = "listSize" id = "listSize" value = "7">
 	<input type="hidden" name="searchFieldValue"  id="searchFieldValue" value="${searchField }"/>
    		<select name="searchField"  id="searchField" value="${searchField }">
      		<option value="choice">선택</option>
@@ -244,7 +248,9 @@ window.onload = function(){
 						</c:choose>
 						<td>기존 방식</td>
 					</tr>
-					<tr>
+					
+					<!-- ajax 페이징 시작 -->
+					<%-- <tr>
 						<td colspan="6">
 							<c:if test="${pageMap.curBlock > 1}">
 			                    <a href="javascript:goPage('1')">[처음]</a>
@@ -279,7 +285,8 @@ window.onload = function(){
 			                </c:if>
 						</td>
 						<td>ajax 방식</td>
-					</tr>
+					</tr> --%>
+					<!-- ajax 페이징 끝-->
 			</table>
 		</form> 
 	</div>

@@ -17,6 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -55,13 +57,35 @@ public class FileuploadController {
 		return uuid;
 	}
 	
+	
+	
+	
+	
+	
 	//파일 업로드 처리
 	/*
 	파일업로드는 반드시 POST방식으로 처리해야 하므로 컨트롤러에 
 	매핑시 method.value 두 가지 속성을 명시해야 한다. 
 	 */
+	
+	/* private static final String filePath = "c:/Users/gs/Desktop/upload/"; 마지막에 꼭 / 닫아주기*/
 	@RequestMapping(value="uploadAction", method=RequestMethod.POST)
-	public String uploadAction(Model model, MultipartHttpServletRequest req) {
+	public String uploadAction(Model model, MultipartHttpServletRequest req) throws IllegalStateException{
+		
+		
+		///////////////교육 인셉션 달기
+//		Iterator<String> itr = req.getFileNames();
+//		while (itr.hasNext()) {
+//			MultipartFile mFile = req.getFile(itr.next());
+//			
+//			String realName = mFile.getOriginalFilename();
+//			String saveFileName = System.currentTimeMillis() + "_"+ mFile.getOriginalFilename();
+//			//맵에  담아서 DB에 저장
+//			
+//			mFile.transferTo(new File("저장경로+파일명"));
+//			
+//		}
+		
 		
 		//서버의 물리적 경로 가져오기
 		String path = req.getSession().getServletContext().getRealPath("/resources/upload");
@@ -168,6 +192,7 @@ public class FileuploadController {
 		}
 		
 		model.addAttribute("fileMap", fileMap);
+		System.out.println(fileMap);
 		return "board/uploadList";
 	}
 	
@@ -177,11 +202,8 @@ public class FileuploadController {
 
 		String fileName = req.getParameter("fileName");
 		String oriFileName = req.getParameter("oriFileName");
-		
 		String saveDirectory = req.getSession().getServletContext().getRealPath("/resources/upload");
-		
 		File downloadFile = new File(saveDirectory + "/"+fileName);
-		
 		if(!downloadFile.canRead()) {
 			throw new Exception("파일을 찾을 수 없습니다.");
 		}
@@ -196,5 +218,52 @@ public class FileuploadController {
 	}
 	
 	
+	
+	
+	 @RequestMapping(value="/fileDelete", method=RequestMethod.POST)
+	 @ResponseBody
+	 public String fileDelete(HttpServletRequest req, @RequestParam Map<String, Object> map) throws Exception {
+
+		 int result  = 1;
+		 System.out.println("fileDelete로 들어옴");
+		
+		 String den = (String) map.get("fileName");
+		 System.out.println("예비예비"+den);
+		 
+		 
+//		String oriFileName = req.getParameter("oriFileName");
+		String fileName = (String) map.get("fileDelete");
+		System.out.println("삭제되는 파일 이름:"+fileName);
+		String saveDirectory = req.getSession().getServletContext().getRealPath("/resources/upload");
+		File deleteFile = new File(saveDirectory + "/"+fileName);
+		
+		
+		System.out.println("deleteFile"+deleteFile);
+		deleteFile.delete();
+		//new File(saveDirectory+fileName.replace('/',File.separatorChar)).delete(); //파일 삭제       
+
+		return Integer.toString(result);
+	 }
+	
+	
+//	 @RequestMapping(value="/fileDelete", method=RequestMethod.POST)
+//	 public String fileDelete(HttpServletRequest req, @RequestParam Map<String, Object> map) throws Exception {
+//		 int result = 1;
+//		System.out.println("fileDelete로 들어옴");
+//		String oriFileName = req.getParameter("oriFileName");
+//		String nnnn = req.getParameter("id");
+//		System.out.println(nnnn);
+//		String fileName = (String) map.get("fileDelete");
+//		System.out.println("삭제되는 파일 이름:"+fileName);
+//		String saveDirectory = req.getSession().getServletContext().getRealPath("/resources/upload");
+//		File deleteFile = new File(saveDirectory + "/"+fileName);
+//		
+//		
+//		System.out.println("deleteFile"+deleteFile);
+//		deleteFile.delete();
+//		//new File(saveDirectory+fileName.replace('/',File.separatorChar)).delete(); //파일 삭제       
+//
+//		 return Integer.toString(result);
+//	 }
 
 }
