@@ -43,7 +43,7 @@ $(function(){
 	            }
 	            else{
 	            	location.reload(); //새로고침
-	                alert("삭제 성공");
+	                alert(deleteFile+" 삭제되었습니다.");
 	            }
 	        },
 	        error: function(){
@@ -76,7 +76,7 @@ $(function(){
 				&nbsp;&nbsp;
 				<!-- 다운로드시 원본파일명으로 변경하려면 기존 파일명을 DB에 저장해야 하므로 여기서는 임시로 파일명을 지정한다.  -->
 			</li>
-			<li><img src="../resources/upload/${file.key }" width="50" /><a href="download.do?fileName=${file.key }&oriFileName=임시파일명.jpg">다운로드</a>    
+			<li><img src="../resources/upload/${file.key }" width="50" /><a href="download.do?fileName=${file.key }&oriFileName=${file.key }">다운로드</a>    
 	<!-- 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="fileDeleteBtn" onclick="fileDeleteAction()" value="삭제하기" />  -->
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="${file.key }" onclick="fileDeleteAction(this)" value="삭제하기" />
 			</li>

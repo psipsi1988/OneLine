@@ -104,7 +104,7 @@ $(function(){
     	
     	
     	
-    	
+    	//파일 선택했을 때 실행되는 함수 (이미지 파일, 사이즈 확인)
     	$("#userfile1").on("change", function() {
     		$("#image_section").empty();
     		//$('#image_section').attr('src', 11);
@@ -139,6 +139,7 @@ $(function(){
     	  	
     	});
     	
+    	//파일 선택 버튼
     	$("#userfile1").on("click", function() {
     		$("#image_section").empty();
     		//$('#image_section').attr('src', 11);
@@ -175,10 +176,10 @@ $(function(){
     	
        
     	//업로드 버튼 추가
-		$("#fileBtn").click(function(){
-			var data = "<div><input type = file></div>";
-			$("#fileDv").append(data);
-		})
+// 		$("#fileBtn").click(function(){
+// 			var data = "<div><input type = file></div>";
+// 			$("#fileDv").append(data);
+// 		})
     
 });
 </script>

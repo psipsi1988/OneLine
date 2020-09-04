@@ -142,6 +142,16 @@ $(function(){
 			})
 		})
 		
+		//엑셀 다운로드 버튼
+	    $("#excelBtn").click(function(){    
+	    	var cnt = $("input[name='checkbox']:checked").length;
+	        if(cnt == 0){
+	            alert("삭제할 글을 선택해주세요.");
+	        }
+	        else{
+	    		$("#listFrm").attr("action", "delete2.do").attr("method", "post").submit();
+	    	}
+	    })
 
     
         
@@ -168,6 +178,7 @@ window.onload = function(){
 	<button type="button" onclick="location.href='${pageContext.request.contextPath}/write'" >글쓰기</button>
 	<button id="deleteBtn1" onsubmit="false">삭제1</button>
 	<button id="deleteBtn2" onsubmit="false">삭제2</button><br/>
+	<button id="excelBtn" onsubmit="false">엑셀 다운로드</button>
 
 	
 	</div>

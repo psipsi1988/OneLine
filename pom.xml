@@ -192,6 +192,12 @@
             <version>1.2.2</version>
 	    </dependency>
 	
+		<!-- 엑셀 다운로드를 위한 의존 설정 -->
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>3.15</version>
+		</dependency>
 	
 	
 		

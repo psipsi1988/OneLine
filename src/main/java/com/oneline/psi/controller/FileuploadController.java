@@ -226,17 +226,13 @@ public class FileuploadController {
 
 		 int result  = 1;
 		 System.out.println("fileDelete로 들어옴");
-		
-		 String den = (String) map.get("fileName");
-		 System.out.println("예비예비"+den);
-		 
+
 		 
 //		String oriFileName = req.getParameter("oriFileName");
 		String fileName = (String) map.get("fileDelete");
 		System.out.println("삭제되는 파일 이름:"+fileName);
 		String saveDirectory = req.getSession().getServletContext().getRealPath("/resources/upload");
 		File deleteFile = new File(saveDirectory + "/"+fileName);
-		
 		
 		System.out.println("deleteFile"+deleteFile);
 		deleteFile.delete();
