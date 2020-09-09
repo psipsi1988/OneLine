@@ -531,8 +531,7 @@ public class BoardController {
 //		out.clearBuffer();
 		PlatformResponse pRes = new PlatformResponse(response, PlatformRequest.JSP_XML, "utf-8");
 		pRes.sendData(vl, dl);
-//		
-		
+
 //		return "miConnector";
 	}
 	
