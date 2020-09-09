@@ -145,6 +145,48 @@
 						AND REG_DATE <![CDATA[<]]>= #{endDate }
 				</if>	
 	</select>
+	
+	
+	<!-- 게시판 리스트 마이플랫폼에서 사용 -->
+	<select id="milist" parameterType="map" resultMap="mapList">
+		select
+			seq
+			, mem_id
+			, mem_name
+			, board_subject
+			, board_content
+			, reg_date
+			, upt_date
+			, view_cnt
+		 FROM board_study
+		WHERE 1=1 
+	 		<if test="searchTxt != null and !searchTxt.equals('') and !searchField.equals('all')">
+				 AND ${searchField} LIKE '%${searchTxt}%'
+		 		<if test="searchField.equals('BOARD_CONTENT')">
+					OR BOARD_SUBJECT LIKE '%'||#{searchTxt}||'%' 
+				</if>
+			</if>
+			<if test="startDate != null and !startDate.equals('')">
+					AND REG_DATE <![CDATA[>]]>= #{startDate } 
+			</if>
+			<if test="endDate != null and !endDate.equals('')">
+					AND REG_DATE <![CDATA[<]]>= #{endDate }
+			</if>	
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	<!-- 게시판 게시물 전체 개수 구하기 -->
 <!-- 	<select id="total" resultType="int">
 		SELECT 

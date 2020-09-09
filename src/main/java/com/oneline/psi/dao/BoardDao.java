@@ -21,6 +21,8 @@ public interface BoardDao {
 
 	int totalRecordCount(Map<String, Object> map);
 
+	List<Map<String, Object>> milist(Map<String, Object> map);
+
 
 	
 

@@ -8,8 +8,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +23,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.oneline.psi.HomeController;
 import com.oneline.psi.service.BoardService;
+import com.oneline.psi.service.impl.BoardServiceImpl;
+import com.tobesoft.platform.data.DatasetList;
+import com.tobesoft.platform.data.VariableList;
+
+
+import  java.util.*; 
+import  java.sql.*;
+import  com.tobesoft.platform.*; 
+import com.tobesoft.platform.data.*;
+import  java.io.*;
+
+
+
+
+
 
 import util.EnvFileReader;
 import util.PagingUtil;
@@ -32,6 +53,7 @@ public class BoardController {
 	@Resource(name = "service")
 	private BoardService boardService;
 
+	//게시판 리스트
 	@RequestMapping("list")
 	public String list(@RequestParam Map<String, Object> map, Model model, HttpServletRequest req) {
 
@@ -190,6 +212,7 @@ public class BoardController {
 		return "redirect:list";
 	}
 
+
 	// 글 삭제하기
 
 	@RequestMapping("delete.do")
@@ -306,6 +329,229 @@ public class BoardController {
 		model.addAttribute("searchTxt", searchTxt);
 		System.out.println("아아아아아ajax list:"+list);
 		return "board/searchList";
+	}
+
+	//엑셀 다운로드
+	@RequestMapping("excelDown")
+	public String excelDown() {
+		
+	
+		return "excelList";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+	
+	
+	//miConnector
+	@RequestMapping("miConnector")
+	public void miConnector(@RequestParam Map<String, Object> map, HttpServletResponse response, HttpServletRequest request) throws IOException {
+		System.out.println("마이플랫폼 들어옴");
+		
+		/****** Service API 초기화 ******/
+		VariableList vl = new VariableList();
+		DatasetList  dl = new DatasetList();
+		
+		/** Input 부분 초기화 **/
+		VariableList in_vl = new VariableList();
+		DatasetList  in_dl = new DatasetList();
+		PlatformRequest pReq = new PlatformRequest(request, "utf-8");
+		
+		/** Web Server에서 XML수신 및 Parsing **/
+		pReq.receiveData();
+		
+		
+		
+		////////////////////////////////////////////////
+		/** List 획득 및 Dataset, 변수 획득 **/
+		in_vl = pReq.getVariableList();
+		in_dl = pReq.getDatasetList();
+		Dataset in_ds = in_dl.getDataset("search");
+		
+
+//		String searchTxt = request.getParameter("searchTxt");
+//		String searchField = request.getParameter("searchField");
+//		
+//		System.out.println("searchTxt:"+searchTxt);
+//		
+//		String searchTxt1 = new String(searchTxt.getBytes("8859_1"), "UTF-8"); 
+//		String searchTxt2 = new String(searchTxt.getBytes("EUC-KR"), "UTF-8"); 
+//		String searchTxt3 = new String(searchTxt.getBytes("MS949"), "UTF-8"); 
+//		System.out.println("searchTxt1:"+searchTxt1);
+//		System.out.println("searchTxt2:"+searchTxt2);
+//		System.out.println("searchTxt3:"+searchTxt3);
+//		System.out.println("searchField:"+searchField);
+		
+		
+//		System.out.println("**********************");
+//		System.out.println("**********"+in_ds+"**********");
+//		
+		String searchField = in_vl.getValueAsString("searchField");
+		String searchTxt = in_vl.getValueAsString("searchTxt");
+		String startDate = in_vl.getValueAsString("startDate");
+		String endDate = in_vl.getValueAsString("endDate");
+		if(searchField.equals("null")){
+			searchField="";
+		}
+		if(searchTxt.equals("null")){
+			searchTxt="";
+		}
+		if(startDate.equals("null")){
+			startDate="";
+		}
+		if(endDate.equals("null")){
+			endDate="";
+		}
+		
+		System.out.println("===searchField:"+searchField);
+		System.out.println("===searchTxt:"+searchTxt);
+		System.out.println("===startDate:"+startDate);
+		System.out.println("===endDate:"+endDate);
+		map.put("searchField", searchField);
+		map.put("searchTxt", searchTxt);
+		map.put("startDate", startDate);
+		map.put("endDate", endDate);
+		///////////////////////////////////////
+		
+		System.out.println("map:"+map);
+		List<Map<String, Object>> milist = new ArrayList<Map<String, Object>>();
+		milist = boardService.milist(map);
+		System.out.println(milist);
+		
+		
+		/********* Dataset 생성 ************/
+		Dataset ds = new Dataset("javaList");
+		ds.addColumn("seq",ColumnInfo.COLTYPE_INT, 100);
+		ds.addColumn("memId",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("memName",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("boardSubject",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("boardContent",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("regDate",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("uptDate",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("viewCnt",ColumnInfo.COLTYPE_STRING, 100);
+		
+		
+		for (int i= 0; i < milist.size(); i++) {
+			int row = ds.appendRow();
+			int seq = Integer.parseInt(milist.get(i).get("seq").toString());
+			ds.setColumn(row, "seq", seq);
+			ds.setColumn(row, "memId", milist.get(i).get("memId").toString());
+			ds.setColumn(row, "memName", milist.get(i).get("memName").toString());
+			ds.setColumn(row, "boardSubject", milist.get(i).get("boardSubject").toString());
+			ds.setColumn(row, "boardContent", milist.get(i).get("boardContent").toString());
+			ds.setColumn(row, "regDate", milist.get(i).get("regDate").toString());
+
+			String uptDate = milist.get(i).get("uptDate") == null ? "" : milist.get(i).get("uptDate").toString();
+			
+			ds.setColumn(row, "uptDate", uptDate);
+			ds.setColumn(row, "viewCnt", milist.get(i).get("viewCnt").toString());
+		}
+
+		
+		/********* 생성된 DATASET을 DATASETLIST에 추가 ************/
+		dl.addDataset(ds);
+
+//		
+//		out.clearBuffer();
+		PlatformResponse pRes = new PlatformResponse(response, PlatformRequest.JSP_XML, "utf-8");
+		pRes.sendData(vl, dl);
+//		
+
+//		return "miConnector";
+	}
+	//miConnector
+	@RequestMapping("miConnectorAll")
+	public void miConnectorAll(@RequestParam Map<String, Object> map, HttpServletResponse response, HttpServletRequest request) throws IOException {
+		System.out.println("마이플랫폼 전체 들어옴");
+		
+		/****** Service API 초기화 ******/
+		VariableList vl = new VariableList();
+		DatasetList  dl = new DatasetList();
+		
+		/** Input 부분 초기화 **/
+		VariableList in_vl = new VariableList();
+		DatasetList  in_dl = new DatasetList();
+		PlatformRequest pReq = new PlatformRequest(request, "utf-8");
+		
+		/** Web Server에서 XML수신 및 Parsing **/
+		pReq.receiveData();
+		
+		
+		System.out.println("map:"+map);
+		List<Map<String, Object>> milist = new ArrayList<Map<String, Object>>();
+		milist = boardService.milist(map);
+		System.out.println(milist);
+		
+		
+		/********* Dataset 생성 ************/
+		Dataset ds = new Dataset("javaList");
+		ds.addColumn("seq",ColumnInfo.COLTYPE_INT, 100);
+		ds.addColumn("memId",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("memName",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("boardSubject",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("boardContent",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("regDate",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("uptDate",ColumnInfo.COLTYPE_STRING, 100);
+		ds.addColumn("viewCnt",ColumnInfo.COLTYPE_STRING, 100);
+		
+		
+		for (int i= 0; i < milist.size(); i++) {
+			int row = ds.appendRow();
+			int seq = Integer.parseInt(milist.get(i).get("seq").toString());
+			ds.setColumn(row, "seq", seq);
+			ds.setColumn(row, "memId", milist.get(i).get("memId").toString());
+			ds.setColumn(row, "memName", milist.get(i).get("memName").toString());
+			ds.setColumn(row, "boardSubject", milist.get(i).get("boardSubject").toString());
+			ds.setColumn(row, "boardContent", milist.get(i).get("boardContent").toString());
+			ds.setColumn(row, "regDate", milist.get(i).get("regDate").toString());
+			
+			String uptDate = milist.get(i).get("uptDate") == null ? "" : milist.get(i).get("uptDate").toString();
+			
+			ds.setColumn(row, "uptDate", uptDate);
+			ds.setColumn(row, "viewCnt", milist.get(i).get("viewCnt").toString());
+		}
+		
+		
+		/********* 생성된 DATASET을 DATASETLIST에 추가 ************/
+		dl.addDataset(ds);
+		
+//		
+//		out.clearBuffer();
+		PlatformResponse pRes = new PlatformResponse(response, PlatformRequest.JSP_XML, "utf-8");
+		pRes.sendData(vl, dl);
+//		
+		
+//		return "miConnector";
+	}
+	
+	
+	//마이플랫폼에서 글 수정하기
+	@RequestMapping("miEditAction.do")
+	public void miEditAction(@RequestParam Map<String, Object> map, Model model, HttpServletResponse response) throws IOException {	
+		System.out.println("miplatform에서 수정 버튼 누름");
+//		int update = boardService.editAction(map);
+//		
+//		System.out.println(update);
+//		System.out.println(map);
+//		// redirect url을 찾아간다.
+		
+		
+		
+		
+		
+	
 	}
 	
 }

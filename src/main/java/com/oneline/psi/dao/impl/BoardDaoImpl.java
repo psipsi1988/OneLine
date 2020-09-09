@@ -57,6 +57,12 @@ public class BoardDaoImpl implements BoardDao {
 		return sqlSession.selectOne("mapper.totalRecordCount", map);
 	}
 
+	@Override
+	public List<Map<String, Object>> milist(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("mapper.milist", map);
+	}
+
 
 
 }

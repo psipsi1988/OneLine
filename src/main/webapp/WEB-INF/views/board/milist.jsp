@@ -1,5 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import = "java.util.*" %>
+<%@ page import = "com.tobesoft.platform.*" %>
+<%@ page import = "com.tobesoft.platform.data.*" %>
+<%@ page import = "java.sql.*" %>
+<%@ page import = "java.io.*" %>
+    
 <%-- <%@taglib prefix="c" uri="http://java.sun.com/jstl/core"%> --%>
 <%@taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -225,11 +231,7 @@ window.onload = function(){
 						<a href="${pageContext.request.contextPath}/list?searchFieldValue=&searchField=MEM_NAME&searchTxt=${list.memName }&startDate=&endDate=">${list.memName }</a>
 						(${list.memId })</td>
 						<td><a href="${pageContext.request.contextPath}/detail?seq=${list.seq }">${list.boardSubject }</a></td>
-						<td>
-							${list.regDate }
-<%-- 							<fmt:formatDate value="${list.regDate }" pattern="yy/MM/dd"/><br/> --%>
-<%-- 							<fmt:formatDate value="${list.regDate }" pattern="yy-MM-dd"/> --%>
-						</td>
+						<td>${list.regDate }</td>
 						<td>${list.uptDate }</td>
 						<td>${list.viewCnt }</td> 
 					</tr>		
